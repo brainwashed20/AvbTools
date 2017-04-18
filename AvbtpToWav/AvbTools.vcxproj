@@ -19,10 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AvtpStream.h" />
+    <ClInclude Include="AvtpStreamInfo.h" />
     <ClInclude Include="AvtpToWav.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AvtpStream.cpp" />
     <ClCompile Include="AvtpToWav.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AvtpStreamInfo.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{22ABE0C0-0436-4089-B088-E922A8A178C1}</ProjectGuid>

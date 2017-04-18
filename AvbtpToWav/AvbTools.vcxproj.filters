@@ -18,10 +18,24 @@
     <ClInclude Include="AvtpToWav.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AvtpStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AvtpStreamInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvtpToWav.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AvtpStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AvtpStreamInfo.cpp">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

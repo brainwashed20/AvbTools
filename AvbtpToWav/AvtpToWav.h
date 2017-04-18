@@ -12,6 +12,8 @@ namespace AvbTools
 		enum class OperationStatus
 		{
 			ERROR_SERVICE_NOT_INITIALIZED,
+			ERROR_FAILED_TO_DUMP_PACKETS,
+			ERROR_FAILED_TO_PARSE_PACKETS_FILE,
 			SUCCESS
 		};
 
@@ -29,7 +31,7 @@ namespace AvbTools
 		};
 
 		static AvtpToWav* getInstance();
-		void init(const std::string& tsharkBin, const std::string& soxBin);
+		void init(const std::string & tempDir, const std::string& tsharkBin, const std::string& soxBin);
 
 		Response convertToWav(const std::string& captureFile, const std::string& audioFile);
 
@@ -43,5 +45,11 @@ namespace AvbTools
 		bool mIsServiceInitialized;
 		std::string mTsharkBin;
 		std::string mSoxBin;
+		std::string mTempDir;
+
+		std::string AvtpToWav::GetRandomStr(const int len);
+
+		std::string ReadPacketsFile(const std::string & path);
+		unsigned int HexToUint(const std::string & hexVal);
 	};
 }
