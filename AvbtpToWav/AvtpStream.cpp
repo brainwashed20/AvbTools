@@ -2,16 +2,15 @@
 
 namespace AvbTools
 {
-	AvtpStream::AvtpStream(const AvtpStreamInfo & streamInfo, const std::string & audioData):
+	AvtpStream::AvtpStream(const AvtpStreamInfo & streamInfo):
 		mStreamInfo(streamInfo),
-		mAudioData(audioData)
+		mStreamData(std::vector<AvtpStreamData>())
 	{
 	}
 
-	void AvtpStream::AddAudioData(const std::string & data)
+	void AvtpStream::AddAudioData(const AvtpStreamData & data)
 	{
-		mAudioData += "\n";
-		mAudioData.append(data);
+		mStreamData.push_back(data);
 	}
 
 	AvtpStream::~AvtpStream()

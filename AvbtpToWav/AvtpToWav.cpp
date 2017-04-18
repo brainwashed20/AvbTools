@@ -52,7 +52,7 @@ namespace AvbTools
 
 		char buf[400];
 		sprintf_s(buf,
-			"%s -r %s -T json > %s -e aaf.data -e aaf.nominal_sample_rate -e aaf.channels_per_frame -e aaf.bit_depth -e eth.dst -e eth.src",
+			"%s -r %s -T json > %s -e aaf.data -e aaf.nominal_sample_rate -e aaf.channels_per_frame -e aaf.bit_depth -e aaf.seqnum -e aaf.avtp_timestamp -e eth.dst -e eth.src",
 			mTsharkBin.c_str(), captureFile.c_str(), packetsFile.c_str());
 
 		const std::string dumpPacketsCommand(buf);
@@ -99,18 +99,27 @@ namespace AvbTools
 			const std::string audioRawData = v["_source"]["layers"].HasMember("aaf.data") ?
 				v["_source"]["layers"]["aaf.data"].GetArray()[0].GetString() : "";
 
+			const std::string avtpTimestamp = v["_source"]["layers"].HasMember("aaf.avtp_timestamp") ?
+				v["_source"]["layers"]["aaf.avtp_timestamp"].GetArray()[0].GetString() : "";
+
+			const unsigned int sequenceNumber = v["_source"]["layers"].HasMember("aaf.seqnum") ?
+				static_cast<unsigned int>(std::atoi(v["_source"]["layers"]["aaf.seqnum"].GetArray()[0].GetString())) : 0;
+
 			AvtpStreamInfo streamInfo = AvbTools::AvtpStreamInfo(streamSource, streamDestination, bitDepth, channelsPerFrame, nominalSampleRate);
 
 			if (streams.find(streamInfo.ToString()) == streams.end())
 			{
-				AvtpStream* stream = new AvtpStream(streamInfo, audioRawData);
+				AvtpStream* stream = new AvtpStream(streamInfo);
+				stream->AddAudioData(AvtpStreamData(audioRawData, sequenceNumber, avtpTimestamp));
 				streams[streamInfo.ToString()] = stream;
 			}
 			else
 			{
-				streams[streamInfo.ToString()]->AddAudioData(audioRawData);
+				streams[streamInfo.ToString()]->AddAudioData(AvtpStreamData(audioRawData, sequenceNumber, avtpTimestamp));
 			}
 		}
+
+		// auto xx = streams["74:da:ea:61:18:82#91:e0:f0:00:fe:ef#25#5#32"]->mStreamData.back();
 
 		std::cout << "aiciisha";
 	}
