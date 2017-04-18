@@ -19,4 +19,8 @@ namespace AvbTools
 		ss << mSource << "#" << mDestination << "#" << mChannelsPerFrame << "#" << mSampleRate << "#" << mBitDepth;
 		return ss.str();
 	}
+
+	AvtpStreamInfo::~AvtpStreamInfo()
+	{
+	}
 }

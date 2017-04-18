@@ -32,10 +32,8 @@
     <ClCompile Include="AvtpStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="AvtpStreamInfo.cpp">
+    <ClCompile Include="AvtpStreamInfo.cpp">
       <Filter>Source Files</Filter>
-    </None>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -8,8 +8,10 @@
 
 #include "../thirdparty/rapidjson/document.h"
 
-#include "AvtpStream.h"
+
 #include "AvtpToWav.h"
+#include "AvtpStream.h"
+
 
 namespace AvbTools
 {
@@ -46,9 +48,9 @@ namespace AvbTools
 		// tshark.exe -r ____AA_03_avb_ALEV4.pcapng -T json > cacca.txt -e aaf.data -e aaf.nominal_sample_rate -e aaf.channels_per_frame -e aaf.bit_depth -e eth.dst -e eth.src
 
 		//std::string packetsFile = GetRandomStr(10) + ".raw";
-		std::string packetsFile = mTempDir + "//" + "ceva2.raw";
+		std::string packetsFile = mTempDir + "//" + "ceva.raw";
 
-		/*char buf[400];
+		char buf[400];
 		sprintf_s(buf,
 			"%s -r %s -T json > %s -e aaf.data -e aaf.nominal_sample_rate -e aaf.channels_per_frame -e aaf.bit_depth -e eth.dst -e eth.src",
 			mTsharkBin.c_str(), captureFile.c_str(), packetsFile.c_str());
@@ -59,9 +61,12 @@ namespace AvbTools
 		{
 			return Response(AvtpToWav::OperationStatus::ERROR_FAILED_TO_DUMP_PACKETS, "Check if the paths for Tshark and capture file and valid");
 		}
-		*/
+		
 
-		std::string jsonPacketsFile = ReadPacketsFile(packetsFile);
+		std::ifstream onStream(packetsFile.c_str(), std::ios::in);
+		std::ostringstream ss;
+		ss << onStream.rdbuf();
+		const std::string jsonPacketsFile(ss.str());
 
 		rapidjson::Document jsonDoc;
 		jsonDoc.Parse(jsonPacketsFile.c_str());
@@ -72,30 +77,42 @@ namespace AvbTools
 			return Response(AvtpToWav::OperationStatus::ERROR_FAILED_TO_PARSE_PACKETS_FILE, "possible corrupt .pcap file");
 		}
 
-		std::unordered_map<std::string, AvbTools::AvtpStream> streams;
+		std::unordered_map<std::string, AvtpStream*> streams;
 
 		for (auto& v : jsonDoc.GetArray())
 		{
-			std::string streamSource = v["_source"]["layers"]["eth.src"].GetArray()[0].GetString();
-			std::string streamDestionation = v["_source"]["layers"]["eth.dst"].GetArray()[0].GetString();
-			unsigned int bitDepth = static_cast<unsigned int>(std::atoi(v["_source"]["layers"]["aaf.bit_depth"].GetArray()[0].GetString()));
-			unsigned int channelsPerFrame = static_cast<unsigned int>(std::atoi(v["_source"]["layers"]["aaf.channels_per_frame"].GetArray()[0].GetString()));
-			unsigned int nominalSampleRate = HexToUint(v["_source"]["layers"]["aaf.nominal_sample_rate"].GetArray()[0].GetString());
-			std::string audioRawData = v["_source"]["layers"]["aaf.data"].GetArray()[0].GetString();
-			
+			const std::string streamSource = v["_source"]["layers"].HasMember("eth.src") ?
+				v["_source"]["layers"]["eth.src"].GetArray()[0].GetString() : "";
+
+			const std::string streamDestination = v["_source"]["layers"].HasMember("eth.dst") ?
+				v["_source"]["layers"]["eth.dst"].GetArray()[0].GetString() : "";
+
+			const unsigned int bitDepth = v["_source"]["layers"].HasMember("aaf.bit_depth") ?
+				static_cast<unsigned int>(std::atoi(v["_source"]["layers"]["aaf.bit_depth"].GetArray()[0].GetString())) : 0;
+
+			const unsigned int channelsPerFrame = v["_source"]["layers"].HasMember("aaf.channels_per_frame") ?
+				static_cast<unsigned int>(std::atoi(v["_source"]["layers"]["aaf.channels_per_frame"].GetArray()[0].GetString())) : 0;
+
+			const unsigned int nominalSampleRate = v["_source"]["layers"].HasMember("aaf.nominal_sample_rate") ?
+				HexToUint(v["_source"]["layers"]["aaf.nominal_sample_rate"].GetArray()[0].GetString()) : 0;
+
+			const std::string audioRawData = v["_source"]["layers"].HasMember("aaf.data") ?
+				v["_source"]["layers"]["aaf.data"].GetArray()[0].GetString() : "";
+
+			AvtpStreamInfo streamInfo = AvbTools::AvtpStreamInfo(streamSource, streamDestination, bitDepth, channelsPerFrame, nominalSampleRate);
+
+			if (streams.find(streamInfo.ToString()) == streams.end())
+			{
+				AvtpStream* stream = new AvtpStream(streamInfo, audioRawData);
+				streams[streamInfo.ToString()] = stream;
+			}
+			else
+			{
+				streams[streamInfo.ToString()]->AddAudioData(audioRawData);
+			}
 		}
 
-		
-	}
-
-	std::string AvtpToWav::ReadPacketsFile(const std::string & path)
-	{
-		std::ifstream onStream(path.c_str(), std::ios::in);
-
-		std::ostringstream ss;
-		ss << onStream.rdbuf();
-
-		return ss.str();
+		std::cout << "aiciisha";
 	}
 
 	AvtpToWav::AvtpToWav() :

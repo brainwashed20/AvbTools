@@ -1,4 +1,5 @@
 #include "AvtpStream.h"
+
 namespace AvbTools
 {
 	AvtpStream::AvtpStream(const AvtpStreamInfo & streamInfo, const std::string & audioData):
@@ -11,5 +12,9 @@ namespace AvbTools
 	{
 		mAudioData += "\n";
 		mAudioData.append(data);
+	}
+
+	AvtpStream::~AvtpStream()
+	{
 	}
 }

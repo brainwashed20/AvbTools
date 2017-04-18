@@ -49,7 +49,6 @@ namespace AvbTools
 
 		std::string AvtpToWav::GetRandomStr(const int len);
 
-		std::string ReadPacketsFile(const std::string & path);
 		unsigned int HexToUint(const std::string & hexVal);
 	};
 }

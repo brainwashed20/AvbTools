@@ -9,6 +9,8 @@ namespace AvbTools
 	public:
 		AvtpStreamInfo(const std::string & source, const std::string & dest, const unsigned int bitDepth, const unsigned int channelsPerFrame, const unsigned int sampleRate);
 		std::string ToString();
+		~AvtpStreamInfo();
+
 	private:
 		std::string mSource;
 		std::string mDestination;

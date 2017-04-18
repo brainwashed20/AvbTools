@@ -28,7 +28,7 @@
     <ClCompile Include="AvtpToWav.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AvtpStreamInfo.cpp" />
+    <ClCompile Include="AvtpStreamInfo.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{22ABE0C0-0436-4089-B088-E922A8A178C1}</ProjectGuid>
