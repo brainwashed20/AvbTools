@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include <set>
 
 #include "AvtpStreamInfo.h"
 #include "AvtpStreamData.h"
@@ -15,7 +15,7 @@ namespace AvbTools
 		void AddAudioData(const AvtpStreamData & streamData);
 		~AvtpStream();
 
-		std::vector<AvtpStreamData> mStreamData;
+		std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare> mStreamData;
 		AvtpStreamInfo mStreamInfo;
 	};
 }

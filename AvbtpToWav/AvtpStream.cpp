@@ -4,13 +4,13 @@ namespace AvbTools
 {
 	AvtpStream::AvtpStream(const AvtpStreamInfo & streamInfo):
 		mStreamInfo(streamInfo),
-		mStreamData(std::vector<AvtpStreamData>())
+		mStreamData(std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare>())
 	{
 	}
 
 	void AvtpStream::AddAudioData(const AvtpStreamData & data)
 	{
-		mStreamData.push_back(data);
+		mStreamData.insert(data);
 	}
 
 	AvtpStream::~AvtpStream()

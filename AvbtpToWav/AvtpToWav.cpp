@@ -50,7 +50,7 @@ namespace AvbTools
 		//std::string packetsFile = GetRandomStr(10) + ".raw";
 		std::string packetsFile = mTempDir + "//" + "ceva.raw";
 
-		char buf[400];
+		/*char buf[400];
 		sprintf_s(buf,
 			"%s -r %s -T json > %s -e aaf.data -e aaf.nominal_sample_rate -e aaf.channels_per_frame -e aaf.bit_depth -e aaf.seqnum -e aaf.avtp_timestamp -e eth.dst -e eth.src",
 			mTsharkBin.c_str(), captureFile.c_str(), packetsFile.c_str());
@@ -60,7 +60,7 @@ namespace AvbTools
 		if (res != 0)
 		{
 			return Response(AvtpToWav::OperationStatus::ERROR_FAILED_TO_DUMP_PACKETS, "Check if the paths for Tshark and capture file and valid");
-		}
+		}*/
 		
 
 		std::ifstream onStream(packetsFile.c_str(), std::ios::in);
