@@ -46,8 +46,7 @@ namespace AvbTools
 		// output to a file the necessary fields 
 		// tshark.exe -r ____AA_03_avb_ALEV4.pcapng -T json > cacca.txt -e aaf.data -e aaf.nominal_sample_rate -e aaf.channels_per_frame -e aaf.bit_depth -e eth.dst -e eth.src
 
-		//std::string packetsFile = GetRandomStr(10) + ".raw";
-		std::string packetsFile = mTempDir + "//" + "ceva.raw";
+		std::string packetsFile = mTempDir + "//" + GetFilenameFromPath(captureFile) + ".json";
 
 		char buf[400];
 		sprintf_s(buf,
@@ -147,5 +146,12 @@ namespace AvbTools
 		unsigned int value;
 		converter >> std::hex >> value;
 		return value;
+	}
+
+	std::string AvtpToWav::GetFilenameFromPath(const std::string & path)
+	{
+		char buf[100], buf2[100], buf3[100], buf4[100];
+		_splitpath_s(path.c_str(), buf, buf2, buf3, buf4);
+		return std::string(buf3);
 	}
 }
