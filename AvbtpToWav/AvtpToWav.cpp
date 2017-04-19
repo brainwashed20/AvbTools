@@ -37,7 +37,7 @@ namespace AvbTools
 		mIsServiceInitialized = true;
 	}
 
-	AvtpToWav::Response AvtpToWav::convertToWav(const std::string & captureFile, const std::string & audioFile)
+	AvtpToWav::Response AvtpToWav::convertToWav(const std::string & captureFile, const std::string & outputFolder)
 	{
 		if (!mIsServiceInitialized)
 		{
@@ -119,7 +119,14 @@ namespace AvbTools
 			}
 		}
 
-		// auto xx = streams["74:da:ea:61:18:82#91:e0:f0:00:fe:ef#25#5#32"]->mStreamData.back();
+		for (const auto& v : streams)
+		{
+			AvtpStream* stream = v.second;
+			if (stream->IsStreamValid())
+			{
+				stream->WriteAsWav(mSoxBin, outputFolder);
+			}
+		}
 
 		std::cout << "aiciisha";
 	}

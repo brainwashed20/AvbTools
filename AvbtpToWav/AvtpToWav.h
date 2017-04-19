@@ -33,7 +33,7 @@ namespace AvbTools
 		static AvtpToWav* getInstance();
 		void init(const std::string & tempDir, const std::string& tsharkBin, const std::string& soxBin);
 
-		Response convertToWav(const std::string& captureFile, const std::string& audioFile);
+		Response convertToWav(const std::string& captureFile, const std::string& outputFolder);
 
 	private:
 
