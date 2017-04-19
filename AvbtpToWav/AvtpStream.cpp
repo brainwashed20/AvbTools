@@ -38,7 +38,8 @@ namespace AvbTools
 	{
 		return mStreamInfo.GetBitDepth() > 0
 			&& mStreamInfo.GetChannelsPerFrame() > 0
-			&& mStreamInfo.GetSampleRate() > 0
+			&& mStreamInfo.GetSampleRate() != AvtpStreamInfo::IEEE1722_AAF_NOMINAL_SAMPLE_RATE::NONE
+			&& mStreamInfo.GetAafFormat() != AvtpStreamInfo::IEEE1722_AAF_FORMAT::NONE
 			&& !mStreamInfo.GetSource().empty()
 			&& !mStreamInfo.GetDestination().empty()
 			&& !mStreamData.empty();

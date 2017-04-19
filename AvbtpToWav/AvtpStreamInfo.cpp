@@ -25,25 +25,47 @@ namespace AvbTools
 		{ IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_192kHz, "192000" },
 	};
 
-	AvtpStreamInfo::AvtpStreamInfo(const std::string & source, const std::string & dest, const unsigned int bitDepth, const unsigned int channelsPerFrame, const unsigned int sampleRate):
+	AvtpStreamInfo::AvtpStreamInfo(const std::string & source, const std::string & dest, const unsigned int bitDepth, const unsigned int channelsPerFrame, const unsigned int sampleRate, const unsigned int format) :
 		mBitDepth(bitDepth),
-	    mSource(source),
+		mSource(source),
 		mDestination(dest),
-	    mChannelsPerFrame(channelsPerFrame),
-	    mSampleRate(sampleRate)
+		mChannelsPerFrame(channelsPerFrame)
 	{
+		switch (sampleRate)
+		{
+		case 1: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_8kHz; break; }
+		case 2: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_16kHz; break; }
+		case 3: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_32kHz; break; }
+		case 4: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_44_1kHz; break; }
+		case 5: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_48kHz; break; }
+		case 6: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_88_2kHz; break; }
+		case 7: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_96kHz; break; }
+		case 8: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_176_4kHz; break; }
+		case 9: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_192kHz; break; }
+		default: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::NONE; break; }
+		}
+
+		switch (format)
+		{
+		case 0: { mFormat = IEEE1722_AAF_FORMAT::USER; break; }
+		case 1: { mFormat = IEEE1722_AAF_FORMAT::FLOAT_32_BIT; break; }
+		case 2: { mFormat = IEEE1722_AAF_FORMAT::INT_32_BIT; break; }
+		case 3: { mFormat = IEEE1722_AAF_FORMAT::INT_24_BIT; break; }
+		case 4: { mFormat = IEEE1722_AAF_FORMAT::INT_16_BIT; break; }
+		case 5: { mFormat = IEEE1722_AAF_FORMAT::AES3_32_BIT; break; }
+		default: { mFormat = IEEE1722_AAF_FORMAT::NONE; break; }
+		}
 	}
 
 	std::string AvtpStreamInfo::ToString()
 	{
 		std::ostringstream ss;
-		ss << mSource << "#" << mDestination << "#" << mChannelsPerFrame << "#" << mSampleRate << "#" << mBitDepth;
+		ss << mSource << "#" << mDestination << "#" << mChannelsPerFrame << "#" << (unsigned int)mSampleRate << "#" << mBitDepth << "#" << (unsigned int)mFormat;
 		return ss.str();
 	}
 
 	AvtpStreamInfo::~AvtpStreamInfo()
-	{
-	}
+	{}
 
 	std::string AvtpStreamInfo::GetSource() const
 	{
@@ -65,8 +87,13 @@ namespace AvbTools
 		return mChannelsPerFrame;
 	}
 
-	unsigned int AvtpStreamInfo::GetSampleRate() const
+	AvtpStreamInfo::IEEE1722_AAF_NOMINAL_SAMPLE_RATE AvtpStreamInfo::GetSampleRate() const
 	{
 		return mSampleRate;
+	}
+
+	AvtpStreamInfo::IEEE1722_AAF_FORMAT AvtpStreamInfo::GetAafFormat() const
+	{
+		return mFormat;
 	}
 }
