@@ -21,7 +21,7 @@ namespace AvbTools
 			AES3_32_BIT = 5
 		};
 
-		static const std::map<IEEE1722_AAF_FORMAT, std::string> kSoxAafFormatArgumentMap;
+		static std::map<IEEE1722_AAF_FORMAT, std::string> kSoxAafFormatArgumentMap;
 
 		enum class IEEE1722_AAF_NOMINAL_SAMPLE_RATE
 		{
@@ -37,7 +37,7 @@ namespace AvbTools
 			RATE_192kHz = 9
 		};
 
-		static const std::map<IEEE1722_AAF_NOMINAL_SAMPLE_RATE, std::string> kSoxAafSampleRateArgumentMap;
+		static std::map<IEEE1722_AAF_NOMINAL_SAMPLE_RATE, unsigned int> kSoxAafSampleRateArgumentMap;
 
 		AvtpStreamInfo(const std::string & source, const std::string & dest, const unsigned int bitDepth, const unsigned int channelsPerFrame, const unsigned int sampleRate, const unsigned int format);
 		std::string ToString();

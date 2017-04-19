@@ -8,7 +8,6 @@
 
 #include "../thirdparty/rapidjson/document.h"
 
-
 #include "AvtpToWav.h"
 #include "AvtpStream.h"
 
@@ -131,7 +130,7 @@ namespace AvbTools
 			}
 		}
 
-		std::cout << "aiciisha";
+		return Response(AvtpToWav::OperationStatus::SUCCESS, "check output folder");
 	}
 
 	AvtpToWav::AvtpToWav() :
@@ -140,23 +139,6 @@ namespace AvbTools
 		mSoxBin(std::string()),
 		mTempDir(std::string())
 	{
-	}
-
-	std::string AvtpToWav::GetRandomStr(const int len)
-	{
-		static const char alphanum[] =
-			"0123456789"
-			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-			"abcdefghijklmnopqrstuvwxyz";
-
-		std::string res;
-
-		for (int i = 0; i < len; ++i)
-		{
-			res.push_back(alphanum[rand() % (sizeof(alphanum) - 1)]);
-		}
-
-		return res;
 	}
 
 	unsigned int AvtpToWav::HexToUint(const std::string & hexVal)

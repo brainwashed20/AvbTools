@@ -47,8 +47,6 @@ namespace AvbTools
 		std::string mSoxBin;
 		std::string mTempDir;
 
-		std::string AvtpToWav::GetRandomStr(const int len);
-
 		unsigned int HexToUint(const std::string & hexVal);
 	};
 }

@@ -18,20 +18,37 @@ namespace AvbTools
 
 	bool AvtpStream::WriteAsWav(const std::string & soxBin, const std::string & outputDir)
 	{
-		std::string rawAudioFile = mStreamInfo.ToString() + ".raw";
-		std::replace(rawAudioFile.begin(), rawAudioFile.end(), ':', '_');
-		std::ofstream g(outputDir + "\\" + rawAudioFile);
-
+		std::string audioFileName = mStreamInfo.GetSource() + "_" + mStreamInfo.GetDestination();
+		std::replace(audioFileName.begin(), audioFileName.end(), ':', '_');
+		
+		// write raw data to file first
+		std::string rawDataFile = audioFileName + ".raw";
+		std::replace(rawDataFile.begin(), rawDataFile.end(), ':', '_');
+		std::ofstream g(outputDir + "\\" + rawDataFile);
 		for (const auto& data : mStreamData)
 		{
 			g << data.mAudioData;
 		}
-
 		g.close();
 
+		// now call sox
+		std::string wavAudioFile = audioFileName + ".wav";
+		char buf[400];
+		sprintf_s(buf,
+			"%s -r %u -e %s -b %u -c %u %s %s",
+			soxBin.c_str(),
+			AvtpStreamInfo::kSoxAafSampleRateArgumentMap[mStreamInfo.GetSampleRate()],
+			AvtpStreamInfo::kSoxAafFormatArgumentMap[mStreamInfo.GetAafFormat()].c_str(),
+			mStreamInfo.GetBitDepth(),
+			5,
+			(outputDir + "\\" + rawDataFile).c_str(),
+			(outputDir + "\\" + wavAudioFile).c_str());
 
+		const std::string soxCmd(buf);
 
-		return true;
+		int ret = std::system(soxCmd.c_str());
+
+		return (ret == 0);
 	}
 
 	bool AvtpStream::IsStreamValid() const
