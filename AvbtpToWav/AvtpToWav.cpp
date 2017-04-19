@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "../thirdparty/rapidjson/document.h"
+#include "../thirdparty/rapidjson/filereadstream.h"
 
 #include "AvtpToWav.h"
 #include "AvtpStream.h"
@@ -59,15 +60,13 @@ namespace AvbTools
 		{
 			return Response(AvtpToWav::OperationStatus::ERROR_FAILED_TO_DUMP_PACKETS, "Check if the paths for Tshark and capture file and valid");
 		}
-		
 
-		std::ifstream onStream(packetsFile.c_str(), std::ios::in);
-		std::ostringstream ss;
-		ss << onStream.rdbuf();
-		const std::string jsonPacketsFile(ss.str());
-
+		FILE* fp = fopen(packetsFile.c_str(), "rb");
+		char readBuffer[65536];
+		rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 		rapidjson::Document jsonDoc;
-		jsonDoc.Parse(jsonPacketsFile.c_str());
+		jsonDoc.ParseStream(is);
+		fclose(fp);
 
 		if (jsonDoc.HasParseError()
 			|| !jsonDoc.IsArray())

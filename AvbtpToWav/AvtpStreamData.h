@@ -17,7 +17,7 @@ namespace AvbTools
 		{
 			bool operator() (const AvtpStreamData& lhs, const AvtpStreamData& rhs) const
 			{
-				return lhs.mSequenceNumber > rhs.mSequenceNumber;
+				return lhs.mSequenceNumber < rhs.mSequenceNumber;
 			}
 		};
 	};
