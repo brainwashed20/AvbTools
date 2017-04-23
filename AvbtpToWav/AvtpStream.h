@@ -20,7 +20,6 @@ namespace AvbTools
 		bool IsStreamValid() const;
 
 	private:
-
 		std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare> mStreamData;
 		AvtpStreamInfo mStreamInfo;
 	};

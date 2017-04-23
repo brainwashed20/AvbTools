@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <memory>
 #include <unordered_map>
 
 #include "../thirdparty/rapidjson/document.h"
@@ -74,54 +75,52 @@ namespace AvbTools
 			return Response(AvtpToWav::OperationStatus::ERROR_FAILED_TO_PARSE_PACKETS_FILE, "possible corrupt .pcap file");
 		}
 
-		std::unordered_map<std::string, AvtpStream*> streams;
+		std::unordered_map<std::string, std::unique_ptr<AvtpStream>> streams;
 
 		for (auto& v : jsonDoc.GetArray())
 		{
-			const std::string streamSource = v["_source"]["layers"].HasMember("eth.src") ?
-				v["_source"]["layers"]["eth.src"].GetArray()[0].GetString() : "";
+			const rapidjson::Value& elem = v["_source"]["layers"];
 
-			const std::string streamDestination = v["_source"]["layers"].HasMember("eth.dst") ?
-				v["_source"]["layers"]["eth.dst"].GetArray()[0].GetString() : "";
+			const std::string streamSource = elem.HasMember("eth.src") ?
+				elem["eth.src"].GetArray()[0].GetString() : "";
 
-			const unsigned int bitDepth = v["_source"]["layers"].HasMember("aaf.bit_depth") ?
-				static_cast<unsigned int>(std::atoi(v["_source"]["layers"]["aaf.bit_depth"].GetArray()[0].GetString())) : 0;
+			const std::string streamDestination = elem.HasMember("eth.dst") ?
+				elem["eth.dst"].GetArray()[0].GetString() : "";
 
-			const unsigned int channelsPerFrame = v["_source"]["layers"].HasMember("aaf.channels_per_frame") ?
-				static_cast<unsigned int>(std::atoi(v["_source"]["layers"]["aaf.channels_per_frame"].GetArray()[0].GetString())) : 0;
+			const unsigned int bitDepth = elem.HasMember("aaf.bit_depth") ?
+				static_cast<unsigned int>(std::atoi(elem["aaf.bit_depth"].GetArray()[0].GetString())) : 0;
 
-			const unsigned int nominalSampleRate = v["_source"]["layers"].HasMember("aaf.nominal_sample_rate") ?
-				HexToUint(v["_source"]["layers"]["aaf.nominal_sample_rate"].GetArray()[0].GetString()) : 0;
+			const unsigned int channelsPerFrame = elem.HasMember("aaf.channels_per_frame") ?
+				static_cast<unsigned int>(std::atoi(elem["aaf.channels_per_frame"].GetArray()[0].GetString())) : 0;
 
-			const std::string audioRawData = v["_source"]["layers"].HasMember("aaf.data") ?
-				v["_source"]["layers"]["aaf.data"].GetArray()[0].GetString() : "";
+			const unsigned int nominalSampleRate = elem.HasMember("aaf.nominal_sample_rate") ?
+				HexToUint(elem["aaf.nominal_sample_rate"].GetArray()[0].GetString()) : 0;
 
-			const std::string avtpTimestamp = v["_source"]["layers"].HasMember("aaf.avtp_timestamp") ?
-				v["_source"]["layers"]["aaf.avtp_timestamp"].GetArray()[0].GetString() : "";
+			const std::string audioRawData = elem.HasMember("aaf.data") ?
+				elem["aaf.data"].GetArray()[0].GetString() : "";
 
-			const unsigned int sequenceNumber = v["_source"]["layers"].HasMember("aaf.seqnum") ?
-				static_cast<unsigned int>(std::atoi(v["_source"]["layers"]["aaf.seqnum"].GetArray()[0].GetString())) : 0;
+			const std::string avtpTimestamp = elem.HasMember("aaf.avtp_timestamp") ?
+				elem["aaf.avtp_timestamp"].GetArray()[0].GetString() : "";
 
-			const unsigned int aafFormat = v["_source"]["layers"].HasMember("aaf.format_info") ?
-				HexToUint(v["_source"]["layers"]["aaf.format_info"].GetArray()[0].GetString()) : 0;
+			const unsigned int sequenceNumber = elem.HasMember("aaf.seqnum") ?
+				static_cast<unsigned int>(std::atoi(elem["aaf.seqnum"].GetArray()[0].GetString())) : 0;
+
+			const unsigned int aafFormat = elem.HasMember("aaf.format_info") ?
+				HexToUint(elem["aaf.format_info"].GetArray()[0].GetString()) : 0;
 
 			AvtpStreamInfo streamInfo = AvbTools::AvtpStreamInfo(streamSource, streamDestination, bitDepth, channelsPerFrame, nominalSampleRate, aafFormat);
 
-			if (streams.find(streamInfo.ToString()) == streams.end())
+			const std::string hashKey(streamInfo.ToString());
+			if (streams.find(hashKey) == streams.end())
 			{
-				AvtpStream* stream = new AvtpStream(streamInfo);
-				stream->AddAudioData(AvtpStreamData(audioRawData, sequenceNumber, avtpTimestamp));
-				streams[streamInfo.ToString()] = stream;
+				streams[hashKey] = std::unique_ptr<AvtpStream>(new AvtpStream(streamInfo));
 			}
-			else
-			{
-				streams[streamInfo.ToString()]->AddAudioData(AvtpStreamData(audioRawData, sequenceNumber, avtpTimestamp));
-			}
+			streams[hashKey]->AddAudioData(AvtpStreamData(audioRawData, sequenceNumber, avtpTimestamp));
 		}
 
 		for (const auto& v : streams)
 		{
-			AvtpStream* stream = v.second;
+			AvtpStream* stream = v.second.get();
 			if (stream->IsStreamValid())
 			{
 				stream->WriteAsWav(mSoxBin, outputFolder);
