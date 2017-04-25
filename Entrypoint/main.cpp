@@ -5,7 +5,7 @@ const static std::string kWiresharkBin = kCurrentDir + "HelperTools\\Wireshark\\
 const static std::string kSoxBin = kCurrentDir + "HelperTools\\sox-14-4-2\\sox.exe";
 const static std::string kTempDir = kCurrentDir + "__temp__";
 
-const static std::string input = "C:\\Users\\alex\\Source\\Repos\\AvbTools\\__temp__\\____AA_03_avb_ALEV4.pcapng";
+const static std::string input = "D:\\avb_pcap_tool\\AvbTools\\__temp__\\Booster_Coom_Startup_To_10mins.pcapng";
 
 int main()
 {

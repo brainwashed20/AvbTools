@@ -7,13 +7,48 @@ namespace AvbTools
 {
 	AvtpStream::AvtpStream(const AvtpStreamInfo & streamInfo):
 		mStreamInfo(streamInfo),
-		mStreamData(std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare>())
+		mStreamData(std::vector<std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare>>())
 	{
+		mStreamData.push_back(std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare>());
 	}
 
 	void AvtpStream::AddAudioData(const AvtpStreamData & data)
 	{
-		mStreamData.insert(data);
+		std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare>& currentSet = mStreamData.back();
+
+		if (currentSet.empty())
+		{
+			currentSet.insert(data);
+		}
+		else
+		{
+			
+			if (std::prev(currentSet.end())->mSequenceNumber > data.mSequenceNumber)
+			{
+				// create a new one
+				mStreamData.push_back(std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare>());
+				mStreamData.back().insert(data);
+			}
+			else
+			{
+				// append to the existing one
+				currentSet.insert(data);
+			}
+		}
+	}
+
+	std::vector<char> AvtpStream::HexToBytes(const std::string& hex)
+	{
+		std::vector<char> bytes;
+
+		for (unsigned int i = 0; i < hex.length(); i += 2)
+		{
+			std::string byteString = hex.substr(i, 2);
+			char byte = (char)strtol(byteString.c_str(), NULL, 16);
+			bytes.push_back(byte);
+		}
+
+		return bytes;
 	}
 
 	bool AvtpStream::WriteAsWav(const std::string & soxBin, const std::string & outputDir)
@@ -21,14 +56,25 @@ namespace AvbTools
 		std::string audioFileName = mStreamInfo.GetSource() + "_" + mStreamInfo.GetDestination();
 		std::replace(audioFileName.begin(), audioFileName.end(), ':', '_');
 		
-		// write raw data to file first
 		std::string rawDataFile = audioFileName + ".raw";
 		std::replace(rawDataFile.begin(), rawDataFile.end(), ':', '_');
-		std::ofstream g(outputDir + "\\" + rawDataFile);
-		for (const auto& data : mStreamData)
+	
+		// create hex array
+		std::string hexData;
+		for (auto& container : mStreamData)
 		{
-			g << data.mAudioData;
+			for (auto& data : container)
+			{
+				std::string str(data.mAudioData);
+				str.erase(std::remove(str.begin(), str.end(), ':'), str.end());
+				hexData += str;
+			}
 		}
+
+		// write binary array to disk
+		std::vector<char> binaryData = HexToBytes(hexData);
+		std::ofstream g(outputDir + "\\" + rawDataFile, std::ofstream::out | std::ofstream::binary);
+		g.write(binaryData.data(), binaryData.size());
 		g.close();
 
 		// now call sox
@@ -40,7 +86,7 @@ namespace AvbTools
 			AvtpStreamInfo::kSoxAafSampleRateArgumentMap[mStreamInfo.GetSampleRate()],
 			AvtpStreamInfo::kSoxAafFormatArgumentMap[mStreamInfo.GetAafFormat()].c_str(),
 			mStreamInfo.GetBitDepth(),
-			5,
+			mStreamInfo.GetChannelsPerFrame(),
 			(outputDir + "\\" + rawDataFile).c_str(),
 			(outputDir + "\\" + wavAudioFile).c_str());
 
@@ -65,4 +111,6 @@ namespace AvbTools
 	AvtpStream::~AvtpStream()
 	{
 	}
+
+	
 }

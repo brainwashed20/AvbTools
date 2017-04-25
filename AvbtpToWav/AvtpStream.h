@@ -2,6 +2,7 @@
 
 #include <string>
 #include <set>
+#include <vector>
 
 #include "AvtpStreamInfo.h"
 #include "AvtpStreamData.h"
@@ -20,7 +21,8 @@ namespace AvbTools
 		bool IsStreamValid() const;
 
 	private:
-		std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare> mStreamData;
+		std::vector<std::set<AvtpStreamData, AvtpStreamData::AvtpStreamDataCompare>> mStreamData;
+		std::vector<char> HexToBytes(const std::string& hex);
 		AvtpStreamInfo mStreamInfo;
 	};
 }
