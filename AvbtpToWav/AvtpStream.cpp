@@ -22,7 +22,6 @@ namespace AvbTools
 		}
 		else
 		{
-			
 			if (std::prev(currentSet.end())->mSequenceNumber > data.mSequenceNumber)
 			{
 				// create a new one
@@ -44,7 +43,7 @@ namespace AvbTools
 		for (unsigned int i = 0; i < hex.length(); i += 2)
 		{
 			std::string byteString = hex.substr(i, 2);
-			char byte = (char)strtol(byteString.c_str(), NULL, 16);
+			char byte = (char)strtol(byteString.c_str(), NULL, mStreamInfo.GetBitDepth());
 			bytes.push_back(byte);
 		}
 

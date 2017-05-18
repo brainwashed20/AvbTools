@@ -23,11 +23,13 @@
     <ClInclude Include="AvtpStreamData.h" />
     <ClInclude Include="AvtpStreamInfo.h" />
     <ClInclude Include="AvtpToWav.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvtpStream.cpp" />
     <ClCompile Include="AvtpStreamData.cpp" />
     <ClCompile Include="AvtpToWav.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvtpStreamInfo.cpp" />

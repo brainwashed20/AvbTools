@@ -47,7 +47,5 @@ namespace AvbTools
 		std::string mTempDir;
 
 		unsigned int HexToUint(const std::string & hexVal);
-
-		std::string GetFilenameFromPath(const std::string& path);
 	};
 }
