@@ -11,6 +11,7 @@
 #include <stack>
 #include <iostream>
 #include <tuple>
+#include <algorithm>
 
 const static std::string kCurrentDir(MY_SOLUTIONDIR);
 const static std::string kWiresharkBin = kCurrentDir + "HelperTools\\Wireshark\\tshark.exe";
@@ -64,10 +65,8 @@ bool ListFiles(std::wstring path, std::wstring mask, std::vector<std::wstring>& 
         FindClose(hFind);
         hFind = INVALID_HANDLE_VALUE;
     }
-
     return true;
 }
-
 
 
 int main()
@@ -82,6 +81,13 @@ int main()
         for (std::vector<std::wstring>::iterator it = files.begin(); it != files.end(); ++it)
         {
             std::string file = converter.to_bytes(it->c_str());
+            std::string ext = file.substr(file.find_last_of(".") + 1);
+            std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+            if (ext != "pcap")
+            {
+                continue;
+            }
+
             std::tuple<std::string, std::string, std::string> pathInfo = AvbTools::Utils::GetPathInfo(file);
             std::string dir = std::get<0>(pathInfo);
             std::string filename = std::get<1>(pathInfo);

@@ -16,6 +16,7 @@ namespace AvbTools
 	std::map<AvtpStreamInfo::IEEE1722_AAF_NOMINAL_SAMPLE_RATE, unsigned int> AvtpStreamInfo::kSoxAafSampleRateArgumentMap = {
 		{ IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_8kHz, 8000 },
 		{ IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_16kHz, 16000 },
+        { IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_24kHz, 24000 },
 		{ IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_32kHz, 32000 },
 		{ IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_44_1kHz, 44100 },
 		{ IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_48kHz, 48000 },
@@ -42,6 +43,7 @@ namespace AvbTools
 		case 7: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_96kHz; break; }
 		case 8: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_176_4kHz; break; }
 		case 9: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_192kHz; break; }
+        case 10: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::RATE_24kHz; break; }
 		default: { mSampleRate = IEEE1722_AAF_NOMINAL_SAMPLE_RATE::NONE; break; }
 		}
 

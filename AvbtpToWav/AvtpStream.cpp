@@ -80,7 +80,7 @@ namespace AvbTools
 		std::string wavAudioFile = audioFileName + ".wav";
 		char buf[400];
 		sprintf_s(buf,
-			"%s -r %u -e %s -b %u -c %u %s %s",
+			"%s -B -r %u -e %s -b %u -c %u %s %s",
 			soxBin.c_str(),
 			AvtpStreamInfo::kSoxAafSampleRateArgumentMap[mStreamInfo.GetSampleRate()],
 			AvtpStreamInfo::kSoxAafFormatArgumentMap[mStreamInfo.GetAafFormat()].c_str(),

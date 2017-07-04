@@ -68,7 +68,7 @@ namespace AvbTools
 		rapidjson::Document jsonDoc;
 		jsonDoc.ParseStream(is);
 		fclose(fp);
-
+        
 		if (jsonDoc.HasParseError()
 			|| !jsonDoc.IsArray())
 		{

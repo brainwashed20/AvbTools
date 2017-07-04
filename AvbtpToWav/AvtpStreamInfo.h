@@ -34,7 +34,8 @@ namespace AvbTools
 			RATE_88_2kHz = 6,
 			RATE_96kHz = 7,
 			RATE_176_4kHz = 8,
-			RATE_192kHz = 9
+			RATE_192kHz = 9,
+            RATE_24kHz = 10
 		};
 
 		static std::map<IEEE1722_AAF_NOMINAL_SAMPLE_RATE, unsigned int> kSoxAafSampleRateArgumentMap;
