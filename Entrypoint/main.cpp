@@ -80,18 +80,17 @@ int main()
     {
         for (std::vector<std::wstring>::iterator it = files.begin(); it != files.end(); ++it)
         {
-            std::string file = converter.to_bytes(it->c_str());
-            std::string ext = file.substr(file.find_last_of(".") + 1);
-            std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-            if (ext != "pcap")
+            const std::string file = converter.to_bytes(it->c_str());
+            const std::tuple<std::string, std::string, std::string> pathInfo = AvbTools::Utils::GetPathInfo(file);
+            const std::string dir = std::get<0>(pathInfo);
+            
+            std::string extension = std::get<2>(pathInfo);
+            std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+            if (extension != "pcap")
             {
                 continue;
             }
 
-            std::tuple<std::string, std::string, std::string> pathInfo = AvbTools::Utils::GetPathInfo(file);
-            std::string dir = std::get<0>(pathInfo);
-            std::string filename = std::get<1>(pathInfo);
-            std::string extension = std::get<2>(pathInfo);
             AvbTools::AvtpToWav::getInstance()->convertToWav(file, dir);
         }
     }
