@@ -78,7 +78,7 @@ int main()
     std::wstring wide = converter.from_bytes(kTempDir);
     if (ListFiles(wide, L"*", files))
     {
-        for (std::vector<std::wstring>::iterator it = files.begin(); it != files.end(); ++it)
+        for (auto it = files.begin(); it != files.end(); ++it)
         {
             const std::string file = converter.to_bytes(it->c_str());
             const std::tuple<std::string, std::string, std::string> pathInfo = AvbTools::Utils::GetPathInfo(file);
